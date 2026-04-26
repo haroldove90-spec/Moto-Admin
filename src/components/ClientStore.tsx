@@ -65,7 +65,6 @@ export const ClientStore = ({ productId }: { productId?: string }) => {
       }
       return [...current, { ...product, quantity: 1 }];
     });
-    alert(`${product.name} agregado al carrito`);
   };
 
   const removeFromCart = (id: string) => {
@@ -287,6 +286,24 @@ export const ClientStore = ({ productId }: { productId?: string }) => {
       <footer className="pt-20 border-t border-slate-900 text-center text-slate-600">
         <p className="text-[10px] font-black uppercase tracking-[0.2em]">MotoTech Pro © 2026 // Calidad en cada ensamble</p>
       </footer>
+
+      {/* Floating Cart Button */}
+      <div className="fixed bottom-8 right-8 z-[100] md:bottom-12 md:right-12">
+        <button 
+          onClick={() => setIsCartOpen(true)}
+          className="group relative bg-sky-600 hover:bg-sky-500 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(2,132,199,0.4)] transition-all transform hover:scale-110 active:scale-95"
+        >
+          <ShoppingCart size={28} className="group-hover:rotate-12 transition-transform" />
+          {cart.length > 0 && (
+            <span className="absolute -top-1 -right-1 bg-white text-sky-600 text-xs font-black w-6 h-6 rounded-full flex items-center justify-center shadow-xl border-2 border-sky-600 animate-in zoom-in">
+              {cart.length}
+            </span>
+          )}
+          <span className="absolute -top-12 right-0 bg-slate-900 border border-slate-800 text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+            Ver Carrito (${cartTotal})
+          </span>
+        </button>
+      </div>
     </div>
   );
 };

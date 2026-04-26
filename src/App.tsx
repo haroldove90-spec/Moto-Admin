@@ -208,7 +208,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className="flex items-center gap-1 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800 scale-90 md:scale-100 shadow-2xl">
+          <div className="flex items-center gap-2 bg-slate-900 md:bg-slate-900/80 p-1 rounded-2xl border border-slate-800 scale-90 md:scale-100 shadow-2xl max-w-[200px] sm:max-w-none overflow-x-auto no-scrollbar">
             {Object.values(UserRole).map((role) => (
               <button
                 key={role}
@@ -216,7 +216,7 @@ export default function App() {
                   setActiveRole(role);
                   setActiveModule(role === UserRole.ADMIN ? 'dash' : 'store');
                 }}
-                className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-tighter transition-all ${
+                className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-tighter transition-all whitespace-nowrap ${
                   activeRole === role 
                     ? 'bg-sky-600 text-white shadow-lg shadow-sky-600/30' 
                     : 'text-slate-500 hover:text-slate-300'

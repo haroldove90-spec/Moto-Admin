@@ -65,10 +65,13 @@ export const ClientPurchases = () => {
                 </div>
                 <div className="flex flex-col md:items-end justify-center">
                   <p className="text-2xl font-black text-white italic tracking-tighter">${sale.total_amount}</p>
-                  <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded mt-2 ${
-                    sale.status === 'PENDING_WHATSAPP' ? 'bg-amber-500/10 text-amber-500' : 'bg-emerald-500/10 text-emerald-500'
+                  <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded mt-2 border ${
+                    sale.status === 'PENDING_WHATSAPP' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' : 
+                    sale.status === 'IN_PROCESS' ? 'bg-sky-500/10 text-sky-400 border-sky-500/20' :
+                    sale.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                    'bg-rose-500/10 text-rose-400 border-rose-500/20'
                   }`}>
-                    {sale.status === 'PENDING_WHATSAPP' ? 'Pendiente WhatsApp' : 'Completado'}
+                    {sale.status.replace('_', ' ')}
                   </span>
                 </div>
               </div>
