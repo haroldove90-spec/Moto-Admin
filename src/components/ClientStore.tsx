@@ -265,19 +265,30 @@ export const ClientStore = ({ productId }: { productId?: string }) => {
           onRemove={removeFromCart} 
           onUpdateQty={updateQuantity}
           onCheckout={async () => {
-            const saleData = {
-              customer_id: (await supabase.auth.getUser()).data.user?.id || 'anonymous',
-              items: cart.reduce((acc, item) => ({ ...acc, [item.id]: { name: item.name, qty: item.quantity, price: item.sellPrice } }), {}),
-              total_amount: cartTotal,
-              profit: cart.reduce((acc, item) => acc + ((item.sellPrice - item.costPrice) * item.quantity), 0),
-              sale_type: 'ONLINE_STORE',
-              status: 'PENDING_WHATSAPP'
-            };
+            try {
+              const { data: { user } } = await supabase.auth.getUser();
+              const saleData = {
+                customer_id: user?.id || null,
+                items: cart.reduce((acc, item) => ({ ...acc, [item.id]: { name: item.name, qty: item.quantity, price: item.sellPrice } }), {}),
+                total_amount: cartTotal,
+                profit: cart.reduce((acc, item) => acc + ((item.sellPrice - item.costPrice) * item.quantity), 0),
+                sale_type: 'ONLINE_STORE',
+                status: 'PENDING_WHATSAPP'
+              };
 
-            const { error } = await supabase.from('sales').insert([saleData]);
-            if (error) console.error('Error recording sale:', error);
-            
-            handleCheckout();
+              const { error } = await supabase.from('sales').insert([saleData]);
+              if (error) {
+                console.error('Error recording sale:', error);
+                alert('Hubo un problema al registrar tu pedido, pero puedes continuar por WhatsApp.');
+              } else {
+                setCart([]); // Clear cart after success
+              }
+              
+              handleCheckout();
+            } catch (err) {
+              console.error('Checkout error:', err);
+              handleCheckout();
+            }
           }}
           total={cartTotal}
         />
