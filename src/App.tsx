@@ -13,6 +13,7 @@ import {
   BarChart3, 
   ShoppingCart, 
   ChevronRight,
+  CreditCard,
 } from 'lucide-react';
 import { UserRole } from './types';
 import { AdminMechanics } from './components/AdminMechanics';
@@ -20,6 +21,8 @@ import { AdminShop } from './components/AdminShop';
 import { AdminRepairs } from './components/AdminRepairs';
 import { AdminSales } from './components/AdminSales';
 import { ClientStore } from './components/ClientStore';
+import { ClientPurchases } from './components/ClientPurchases';
+import { AdminStoreSales } from './components/AdminStoreSales';
 
 export default function App() {
   const [activeRole, setActiveRole] = useState<UserRole>(() => {
@@ -46,12 +49,14 @@ export default function App() {
           { id: 'mechanics', label: 'Mecánicos', icon: User },
           { id: 'repairs', label: 'Reparaciones', icon: ClipboardList },
           { id: 'shop', label: 'Catálogo Tienda', icon: Package },
-          { id: 'sales', label: 'Ventas Neta', icon: ShoppingCart },
-          { id: 'store', label: 'Vista Cliente', icon: ShoppingCart },
+          { id: 'store_sales', label: 'Ventas Refacciones', icon: ShoppingCart },
+          { id: 'sales', label: 'Ventas Taller', icon: CreditCard },
+          { id: 'store', label: 'Vista Cliente', icon: Package },
         ];
       case UserRole.CLIENT:
         return [
           { id: 'store', label: 'Tienda Online', icon: ShoppingCart },
+          { id: 'purchases', label: 'Mis Compras', icon: ClipboardList },
         ];
       default:
         return [];
@@ -64,6 +69,10 @@ export default function App() {
       return <ClientStore productId={selectedProductId} />;
     }
 
+    if (activeModule === 'purchases') {
+      return <ClientPurchases />;
+    }
+
     if (activeRole === UserRole.ADMIN) {
       switch (activeModule) {
         case 'dash': return <AdminSales />;
@@ -71,12 +80,17 @@ export default function App() {
         case 'repairs': return <AdminRepairs />;
         case 'shop': return <AdminShop />;
         case 'sales': return <AdminSales />;
+        case 'store_sales': return <AdminStoreSales />;
         default: return <AdminSales />;
       }
     }
 
     if (activeRole === UserRole.CLIENT) {
-      return <ClientStore productId={selectedProductId} />;
+      switch (activeModule) {
+        case 'store': return <ClientStore productId={selectedProductId} />;
+        case 'purchases': return <ClientPurchases />;
+        default: return <ClientStore productId={selectedProductId} />;
+      }
     }
 
     return <div className="p-10 text-slate-500 font-mono text-center">Módulo en construcción para el rol {activeRole}</div>;
