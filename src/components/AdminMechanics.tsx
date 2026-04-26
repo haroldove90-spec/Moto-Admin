@@ -124,29 +124,39 @@ const MechanicModal = ({ initialData, onCancel, onSuccess }: MechanicFormProps) 
     e.preventDefault();
     setLoading(true);
     
-    const payload = {
-      full_name: formData.name,
-      email: formData.email,
-      role: UserRole.MECHANIC,
-    };
+    try {
+      const payload = {
+        full_name: formData.name,
+        email: formData.email,
+        role: UserRole.MECHANIC,
+      };
 
-    let error;
-    if (initialData) {
-      const { error: err } = await supabase
-        .from('profiles')
-        .update(payload)
-        .eq('id', initialData.id);
-      error = err;
-    } else {
-      const { error: err } = await supabase
-        .from('profiles')
-        .insert([payload]);
-      error = err;
+      let error;
+      if (initialData) {
+        const { error: err } = await supabase
+          .from('profiles')
+          .update(payload)
+          .eq('id', initialData.id);
+        error = err;
+      } else {
+        const { error: err } = await supabase
+          .from('profiles')
+          .insert([payload]);
+        error = err;
+      }
+
+      if (error) {
+        console.error('Error saving mechanic:', error);
+        alert('Error: ' + error.message);
+      } else {
+        onSuccess();
+      }
+    } catch (err: any) {
+      console.error('Exception saving mechanic:', err);
+      alert('Error inesperado: ' + err.message);
+    } finally {
+      setLoading(false);
     }
-
-    if (error) alert(error.message);
-    else onSuccess();
-    setLoading(false);
   };
 
   return (

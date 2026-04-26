@@ -194,35 +194,44 @@ const ProductModal = ({ initialData, onCancel, onSuccess }: { initialData: Inven
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(false);
-    
-    const payload = {
-      sku: formData.sku,
-      name: formData.name,
-      description: formData.description,
-      category: formData.category,
-      stock: Number(formData.stock),
-      min_stock: Number(formData.minStock),
-      cost_price: Number(formData.costPrice),
-      sell_price: Number(formData.sellPrice),
-      location: formData.location,
-      primary_image_url: formData.primaryImage,
-      secondary_image_urls: formData.secondaryImages.split(',').map(s => s.trim()).filter(Boolean)
-    };
-
     setLoading(true);
-    let error;
-    if (initialData) {
-      const { error: err } = await supabase.from('products').update(payload).eq('id', initialData.id);
-      error = err;
-    } else {
-      const { error: err } = await supabase.from('products').insert([payload]);
-      error = err;
-    }
+    
+    try {
+      const payload = {
+        sku: formData.sku,
+        name: formData.name,
+        description: formData.description,
+        category: formData.category,
+        stock: Number(formData.stock),
+        min_stock: Number(formData.minStock),
+        cost_price: Number(formData.costPrice),
+        sell_price: Number(formData.sellPrice),
+        location: formData.location,
+        primary_image_url: formData.primaryImage,
+        secondary_image_urls: formData.secondaryImages.split(',').map(s => s.trim()).filter(Boolean)
+      };
 
-    if (error) alert(error.message);
-    else onSuccess();
-    setLoading(false);
+      let error;
+      if (initialData) {
+        const { error: err } = await supabase.from('products').update(payload).eq('id', initialData.id);
+        error = err;
+      } else {
+        const { error: err } = await supabase.from('products').insert([payload]);
+        error = err;
+      }
+
+      if (error) {
+        console.error('Error saving product:', error);
+        alert('Error: ' + error.message);
+      } else {
+        onSuccess();
+      }
+    } catch (err: any) {
+      console.error('Exception saving product:', err);
+      alert('Error inesperado: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

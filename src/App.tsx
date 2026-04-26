@@ -19,6 +19,7 @@ import { AdminMechanics } from './components/AdminMechanics';
 import { AdminShop } from './components/AdminShop';
 import { AdminRepairs } from './components/AdminRepairs';
 import { AdminSales } from './components/AdminSales';
+import { ClientStore } from './components/ClientStore';
 
 export default function App() {
   const [activeRole, setActiveRole] = useState<UserRole>(() => {
@@ -27,15 +28,16 @@ export default function App() {
   });
   const [activeModule, setActiveModule] = useState<string>(() => {
     const params = new URLSearchParams(window.location.search);
-    return params.get('view') || 'dash';
+    return params.get('view') || (params.get('role') === 'CLIENT' ? 'store' : 'dash');
   });
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   // Simple Router Simulation
   const selectedProductId = useMemo(() => {
     const params = new URLSearchParams(window.location.search);
-    return params.get('productId');
+    return params.get('productId') || undefined;
   }, []);
+
   const navigation = useMemo(() => {
     switch (activeRole) {
       case UserRole.ADMIN:
@@ -45,6 +47,7 @@ export default function App() {
           { id: 'repairs', label: 'Reparaciones', icon: ClipboardList },
           { id: 'shop', label: 'Catálogo Tienda', icon: Package },
           { id: 'sales', label: 'Ventas Neta', icon: ShoppingCart },
+          { id: 'store', label: 'Vista Cliente', icon: ShoppingCart },
         ];
       case UserRole.CLIENT:
         return [
@@ -56,9 +59,14 @@ export default function App() {
   }, [activeRole]);
 
   const renderActiveModule = () => {
+    // If it's the store or shop view for CLIENT, show the store
+    if (activeModule === 'store' || (activeRole === UserRole.CLIENT && activeModule === 'shop')) {
+      return <ClientStore productId={selectedProductId} />;
+    }
+
     if (activeRole === UserRole.ADMIN) {
       switch (activeModule) {
-        case 'dash': return <AdminSales />; // Simplified for this turn
+        case 'dash': return <AdminSales />;
         case 'mechanics': return <AdminMechanics />;
         case 'repairs': return <AdminRepairs />;
         case 'shop': return <AdminShop />;
@@ -66,6 +74,11 @@ export default function App() {
         default: return <AdminSales />;
       }
     }
+
+    if (activeRole === UserRole.CLIENT) {
+      return <ClientStore productId={selectedProductId} />;
+    }
+
     return <div className="p-10 text-slate-500 font-mono text-center">Módulo en construcción para el rol {activeRole}</div>;
   };
 
