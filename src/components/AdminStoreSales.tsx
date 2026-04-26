@@ -18,7 +18,7 @@ export const AdminStoreSales = () => {
     const { data, error } = await supabase
       .from('sales')
       .select('*')
-      .eq('sale_type', 'ONLINE_STORE')
+      .eq('sale_type', 'ONLINE')
       .order('created_at', { ascending: false });
     
     if (error) console.error(error);

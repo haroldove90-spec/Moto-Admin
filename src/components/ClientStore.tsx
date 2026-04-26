@@ -272,7 +272,7 @@ export const ClientStore = ({ productId }: { productId?: string }) => {
                 items: cart.reduce((acc, item) => ({ ...acc, [item.id]: { name: item.name, qty: item.quantity, price: item.sellPrice } }), {}),
                 total_amount: cartTotal,
                 profit: cart.reduce((acc, item) => acc + ((item.sellPrice - item.costPrice) * item.quantity), 0),
-                sale_type: 'ONLINE_STORE',
+                sale_type: 'ONLINE',
                 status: 'PENDING_WHATSAPP'
               };
 
