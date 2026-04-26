@@ -21,10 +21,21 @@ import { AdminRepairs } from './components/AdminRepairs';
 import { AdminSales } from './components/AdminSales';
 
 export default function App() {
-  const [activeRole, setActiveRole] = useState<UserRole>(UserRole.ADMIN);
-  const [activeModule, setActiveModule] = useState<string>('dash');
+  const [activeRole, setActiveRole] = useState<UserRole>(() => {
+    const params = new URLSearchParams(window.location.search);
+    return (params.get('role') as UserRole) || UserRole.ADMIN;
+  });
+  const [activeModule, setActiveModule] = useState<string>(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('view') || 'dash';
+  });
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
+  // Simple Router Simulation
+  const selectedProductId = useMemo(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('productId');
+  }, []);
   const navigation = useMemo(() => {
     switch (activeRole) {
       case UserRole.ADMIN:

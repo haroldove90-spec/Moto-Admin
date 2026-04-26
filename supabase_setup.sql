@@ -95,9 +95,13 @@ CREATE POLICY "Public Write" ON public.tasks FOR ALL USING (true);
 CREATE POLICY "Public Write" ON public.sales FOR ALL USING (true);
 CREATE POLICY "Public Write" ON public.part_requests FOR ALL USING (true);
 
--- 7. Storage Buckets (Manual step in UI, but SQL for reference if enabled)
--- Note: Supabase storage buckets are often managed via the dashboard.
--- To allow public access to images bucket:
--- insert into storage.buckets (id, name, public) values ('images', 'images', true);
+-- 7. Storage Buckets (CRITICAL: Manual step in Supabase UI)
+-- 1. Ir a Storage en tu dashboard de Supabase.
+-- 2. Crear un Bucket llamado "images" (Sugerencia: Hazlo público).
+-- 3. Si prefieres hacerlo por SQL (Asegúrate de tener permisos de superuser):
+
+-- insert into storage.buckets (id, name, public) values ('images', 'images', true) on conflict (id) do nothing;
 -- create policy "Public Access" on storage.objects for select using ( bucket_id = 'images' );
 -- create policy "Public Upload" on storage.objects for insert with check ( bucket_id = 'images' );
+-- create policy "Public Delete" on storage.objects for delete using ( bucket_id = 'images' );
+-- create policy "Public Update" on storage.objects for update using ( bucket_id = 'images' );

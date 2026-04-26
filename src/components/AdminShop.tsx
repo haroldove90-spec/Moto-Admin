@@ -89,7 +89,7 @@ export const AdminShop = () => {
                     <FileText size={14} />
                   </button>
                   <button 
-                    onClick={() => window.open(`/shop/product/${p.id}`, '_blank')}
+                    onClick={() => window.open(`/?view=shop&productId=${p.id}&role=CLIENT`, '_blank')}
                     className="p-1.5 bg-slate-800 text-white rounded hover:bg-emerald-600 transition shadow-lg"
                     title="Ver en tienda"
                   >
