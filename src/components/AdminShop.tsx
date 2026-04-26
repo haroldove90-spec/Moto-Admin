@@ -6,7 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { InventoryItem } from '../types';
-import { Plus, Save, X, Trash2, Image as ImageIcon, Camera } from 'lucide-react';
+import { Plus, Save, X, Trash2, Image as ImageIcon, Camera, ExternalLink, Upload } from 'lucide-react';
 
 export const AdminShop = () => {
   const [products, setProducts] = useState<InventoryItem[]>([]);
@@ -82,11 +82,18 @@ export const AdminShop = () => {
                   <ImageIcon size={40} className="text-slate-700" />
                 )}
                 <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                   <button 
+                  <button 
                     onClick={() => { setEditingProduct(p); setIsModalOpen(true); }}
                     className="p-1.5 bg-slate-800 text-white rounded hover:bg-sky-600 transition shadow-lg"
                   >
                     <FileText size={14} />
+                  </button>
+                  <button 
+                    onClick={() => window.open(`/shop/product/${p.id}`, '_blank')}
+                    className="p-1.5 bg-slate-800 text-white rounded hover:bg-emerald-600 transition shadow-lg"
+                    title="Ver en tienda"
+                  >
+                    <ExternalLink size={14} />
                   </button>
                   <button 
                     onClick={() => handleDelete(p.id)}
@@ -143,6 +150,47 @@ const ProductModal = ({ initialData, onCancel, onSuccess }: { initialData: Inven
     secondaryImages: initialData?.secondaryImages?.join(', ') || '',
   });
   const [loading, setLoading] = useState(false);
+
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'primary' | 'secondary') => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    
+    setUploading(true);
+    try {
+      const results: string[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = `products/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('images')
+          .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('images')
+          .getPublicUrl(filePath);
+        
+        results.push(publicUrl);
+      }
+
+      if (type === 'primary') {
+        setFormData({ ...formData, primaryImage: results[0] });
+      } else {
+        const current = formData.secondaryImages ? formData.secondaryImages.split(',').map(s => s.trim()).filter(Boolean) : [];
+        setFormData({ ...formData, secondaryImages: [...current, ...results].join(', ') });
+      }
+    } catch (error: any) {
+      alert('Error subiendo imagen: ' + error.message);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -233,13 +281,31 @@ const ProductModal = ({ initialData, onCancel, onSuccess }: { initialData: Inven
                 <input type="number" required value={formData.minStock} onChange={e => setFormData({...formData, minStock: Number(e.target.value)})} className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none focus:border-sky-500" />
               </div>
             </div>
-            <div>
-              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 flex items-center gap-1"><ImageIcon size={10} /> URL Imagen Principal</label>
-              <input value={formData.primaryImage} onChange={e => setFormData({...formData, primaryImage: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none focus:border-sky-500" placeholder="https://..." />
+            <div className="bg-slate-900 border-2 border-dashed border-slate-700 rounded-xl p-4 flex flex-col items-center gap-2">
+              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 flex items-center gap-1">
+                <ImageIcon size={10} /> Imagen Principal
+              </label>
+              {formData.primaryImage && (
+                <img src={formData.primaryImage} className="w-20 h-20 object-cover rounded-lg mb-2" />
+              )}
+              <label className="cursor-pointer bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2">
+                <Upload size={14} /> {uploading ? 'Subiendo...' : 'Subir Principal'}
+                <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'primary')} disabled={uploading} />
+              </label>
             </div>
-            <div>
-              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 flex items-center gap-1"><Camera size={10} /> URLs Imágenes Secundarias (separadas por coma)</label>
-              <input value={formData.secondaryImages} onChange={e => setFormData({...formData, secondaryImages: e.target.value})} className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none focus:border-sky-500" placeholder="img1.jpg, img2.jpg..." />
+            <div className="bg-slate-900 border-2 border-dashed border-slate-700 rounded-xl p-4 flex flex-col items-center gap-2">
+              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 flex items-center gap-1">
+                <Camera size={10} /> Imágenes Secundarias
+              </label>
+              <div className="flex gap-2 flex-wrap justify-center mb-2">
+                {formData.secondaryImages.split(',').filter(Boolean).map((img, i) => (
+                  <img key={i} src={img.trim()} className="w-10 h-10 object-cover rounded-md" />
+                ))}
+              </div>
+              <label className="cursor-pointer bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2">
+                <Upload size={14} /> {uploading ? 'Subiendo...' : 'Subir Más'}
+                <input type="file" className="hidden" accept="image/*" multiple onChange={(e) => handleFileUpload(e, 'secondary')} disabled={uploading} />
+              </label>
             </div>
           </div>
 
