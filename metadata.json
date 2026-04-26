@@ -1,0 +1,6 @@
+{
+  "name": "MotoFlow Dashboard",
+  "description": "Sistema de gestión integral para talleres de motos con roles de administrador, recepcionista, mecánico, almacenista y cliente.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
