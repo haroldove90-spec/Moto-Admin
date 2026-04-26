@@ -294,25 +294,48 @@ const ProductModal = ({ initialData, onCancel, onSuccess }: { initialData: Inven
               <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 flex items-center gap-1">
                 <ImageIcon size={10} /> Imagen Principal
               </label>
-              {formData.primaryImage && (
-                <img src={formData.primaryImage} className="w-20 h-20 object-cover rounded-lg mb-2" />
+              {formData.primaryImage ? (
+                <div className="relative group">
+                  <img src={formData.primaryImage} className="w-24 h-24 object-cover rounded-lg mb-2 border border-slate-700" title={formData.primaryImage} />
+                  <button onClick={() => setFormData({...formData, primaryImage: ''})} className="absolute -top-2 -right-2 bg-rose-500 text-white rounded-full p-1 shadow-lg opacity-100"><X size={10} /></button>
+                </div>
+              ) : (
+                <div className="w-24 h-24 bg-slate-800 rounded-lg flex items-center justify-center text-slate-700 border border-slate-700 mb-2">
+                  <ImageIcon size={24} />
+                </div>
               )}
-              <label className="cursor-pointer bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2">
-                <Upload size={14} /> {uploading ? 'Subiendo...' : 'Subir Principal'}
+              <label className="cursor-pointer bg-sky-600/10 hover:bg-sky-600/20 text-sky-400 px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 border border-sky-600/20">
+                <Upload size={14} /> {uploading ? 'Subiendo...' : 'Cambiar Imagen'}
                 <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'primary')} disabled={uploading} />
               </label>
             </div>
             <div className="bg-slate-900 border-2 border-dashed border-slate-700 rounded-xl p-4 flex flex-col items-center gap-2">
               <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 flex items-center gap-1">
-                <Camera size={10} /> Imágenes Secundarias
+                <Camera size={10} /> Galería Extra
               </label>
               <div className="flex gap-2 flex-wrap justify-center mb-2">
                 {formData.secondaryImages.split(',').filter(Boolean).map((img, i) => (
-                  <img key={i} src={img.trim()} className="w-10 h-10 object-cover rounded-md" />
+                  <div key={i} className="relative">
+                    <img src={img.trim()} className="w-12 h-12 object-cover rounded-md border border-slate-700" title={img.trim()} />
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        const current = formData.secondaryImages.split(',').filter(Boolean);
+                        current.splice(i, 1);
+                        setFormData({...formData, secondaryImages: current.join(', ')});
+                      }}
+                      className="absolute -top-1 -right-1 bg-rose-500 text-white rounded-full p-0.5 shadow-lg"
+                    >
+                      <X size={8} />
+                    </button>
+                  </div>
                 ))}
+                {formData.secondaryImages.split(',').filter(Boolean).length === 0 && (
+                   <div className="w-12 h-12 bg-slate-800 rounded-md border border-slate-700" />
+                )}
               </div>
-              <label className="cursor-pointer bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2">
-                <Upload size={14} /> {uploading ? 'Subiendo...' : 'Subir Más'}
+              <label className="cursor-pointer bg-sky-600/10 hover:bg-sky-600/20 text-sky-400 px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 border border-sky-600/20">
+                <Plus size={14} /> {uploading ? 'Añadiendo...' : 'Añadir Más'}
                 <input type="file" className="hidden" accept="image/*" multiple onChange={(e) => handleFileUpload(e, 'secondary')} disabled={uploading} />
               </label>
             </div>

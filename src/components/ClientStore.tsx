@@ -217,10 +217,10 @@ export const ClientStore = ({ productId }: { productId?: string }) => {
         </div>
       </header>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
         {loading ? (
           Array(12).fill(0).map((_, i) => (
-            <div key={i} className="aspect-[4/5] bg-slate-900 rounded-3xl animate-pulse" />
+            <div key={i} className="aspect-[4/5] bg-slate-900 rounded-2xl animate-pulse" />
           ))
         ) : filteredProducts.length === 0 ? (
           <div className="col-span-full py-20 text-center text-slate-500 font-bold uppercase italic tracking-widest">No se encontraron productos</div>
@@ -228,29 +228,29 @@ export const ClientStore = ({ productId }: { productId?: string }) => {
           filteredProducts.map((p) => (
             <div 
               key={p.id} 
-              className="geometric-card flex flex-col group cursor-pointer hover:border-sky-500/50 transition-all duration-300 transform hover:-translate-y-2 h-full"
+              className="geometric-card flex flex-col group cursor-pointer hover:border-sky-500/50 transition-all duration-300 transform hover:-translate-y-1 h-full p-2 bg-slate-900 border border-slate-800 rounded-2xl"
             >
-              <div onClick={() => setSelectedProduct(p)} className="aspect-square bg-slate-950 rounded-2xl mb-4 overflow-hidden relative shadow-inner">
+              <div onClick={() => setSelectedProduct(p)} className="aspect-square bg-slate-950 rounded-xl mb-3 overflow-hidden relative shadow-inner">
                 {p.primaryImage ? (
                   <img src={p.primaryImage} alt={p.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-slate-800">No imagen</div>
+                  <div className="w-full h-full flex items-center justify-center text-slate-800 text-[10px]">Sin imagen</div>
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2">
-                   <span className="text-[10px] font-bold text-white uppercase tracking-widest bg-sky-600 px-2 py-1 rounded-full">Ver</span>
+                   <span className="text-[10px] font-bold text-white uppercase tracking-widest bg-sky-600 px-2 py-0.5 rounded-full">Ver Detalles</span>
                 </div>
               </div>
               
-              <div className="flex-1 flex flex-col">
-                <h3 onClick={() => setSelectedProduct(p)} className="text-sm font-bold text-white group-hover:text-sky-400 transition-colors uppercase italic line-clamp-2 mb-2 leading-tight">{p.name}</h3>
+              <div className="flex-1 flex flex-col min-w-0">
+                <h3 onClick={() => setSelectedProduct(p)} className="text-xs font-bold text-white group-hover:text-sky-400 transition-colors uppercase italic line-clamp-2 leading-tight min-h-[2.5rem]">{p.name}</h3>
                 
-                <div className="flex justify-between items-end mt-auto pt-2">
-                  <div className="text-lg font-black text-white italic tracking-tighter">${p.sellPrice}</div>
+                <div className="flex justify-between items-center mt-auto pt-2 border-t border-slate-800/50">
+                  <div className="text-sm font-black text-white italic tracking-tighter">${p.sellPrice}</div>
                   <button 
                     onClick={(e) => { e.stopPropagation(); addToCart(p); }}
-                    className="bg-slate-800 hover:bg-sky-600 text-white p-2 rounded-lg transition-colors shadow-lg"
+                    className="bg-slate-800 hover:bg-sky-600 text-white p-1.5 rounded-lg transition-colors shadow-lg"
                   >
-                    <ShoppingCart size={14} />
+                    <ShoppingCart size={12} />
                   </button>
                 </div>
               </div>
