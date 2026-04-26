@@ -20,7 +20,7 @@ export const ClientStore = ({ productId }: { productId?: string }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const WHATSAPP_NUMBER = "+529811215150";
+  const WHATSAPP_NUMBER = "+52562422244";
 
   const fetchProducts = async () => {
     setLoading(true);
