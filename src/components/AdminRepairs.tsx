@@ -129,10 +129,10 @@ export const AdminRepairs = () => {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
-                       <div className="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-[10px] font-bold text-sky-400 uppercase">
-                        {(order as any).technicianName?.charAt(0) || '?'}
+                      <div className="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-[10px] font-bold text-sky-400 uppercase">
+                        {order.technicianName?.charAt(0) || '?'}
                        </div>
-                       <span className="text-slate-300">{(order as any).technicianName || 'Pendiente'}</span>
+                       <span className="text-slate-300">{order.technicianName || 'Pendiente'}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">

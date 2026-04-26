@@ -28,7 +28,15 @@ export const AdminMechanics = () => {
       .eq('role', UserRole.MECHANIC);
     
     if (error) console.error(error);
-    else setMechanics(data || []);
+    else {
+      const mapped = (data || []).map(p => ({
+        id: p.id,
+        name: p.full_name || 'Sin Nombre',
+        email: p.email,
+        role: p.role as UserRole
+      }));
+      setMechanics(mapped);
+    }
     setLoading(false);
   };
 
